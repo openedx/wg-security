@@ -1,19 +1,21 @@
-name: Auto Assign to Security Project
+# Run the workflow that adds newly created issues to a specific
+# GitHub Project.
+# This workflow could potentially be replaced if/when GitHub adds native
+# support for it: https://github.com/github/roadmap/issues/576
+
+name: Add new issues to the Security project
 
 on:
   issues:
-    types: [opened, edited]
-  pull_request:
-    types: [opened, edited]
-env:
-  MY_GITHUB_TOKEN: ${{ secrets.CC_GITHUB_TOKEN }}
+    types: [opened]
 
 jobs:
-  assign_one_project:
-    runs-on: ubuntu-latest
-    name: Assign to SWG Project
-    steps:
-    - name: Assign NEW issues and NEW pull requests to SWG Project
-      uses: srggrs/assign-one-project-github-action@1.2.1
-      with:
-        project: 'https://github.com/orgs/openedx/projects/45'
+  Add an issue to project:
+    uses: openedx/.github/.github/workflows/add-issue-to-a-project.yml@master
+    secrets:
+      GITHUB_APP_ID: ${{ secrets.GRAPHQL_AUTH_APP_ID }}
+      GITHUB_APP_PRIVATE_KEY: ${{ secrets.GRAPHQL_AUTH_APP_PEM }}
+    with:
+      # required, it's the numeric part of a github project url
+      # for example, https://github.com/orgs/openedx/projects/4 has PROJECT_NUMBER: 4
+      PROJECT_NUMBER: 45
